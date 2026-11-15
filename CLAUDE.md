@@ -5,7 +5,7 @@ A free, fast, friendly tracker for daily web games (Wordle, Connections, Strands
 they've played, keep streaks and see stats. Revenue: donations first, privacy-respecting ads once traffic exists.
 
 ## Hard constraints (never break these)
-- **Budget ≈ 0 kr.** Free tiers only (GitHub Pages, GitHub Actions, Ko-fi, Google Search Console). Propose
+- **Budget ≈ 0 kr.** Free tiers only (GitHub Pages, GitHub Actions, Buy Me a Coffee, Google Search Console). Propose
   anything paid to the owner with cost + expected return, never add it yourself.
 - **Owner time: 5 hours/week.** Anything needing the owner must be batched into the weekly review (docs/weekly-routine.md).
 - **The owner approves** anything that publishes content, spends money, contacts people, or has legal effect.

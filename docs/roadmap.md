@@ -6,7 +6,8 @@ Realistic for 5 hours/week and ~0 kr. Dates are targets, not promises.
 - [x] Tracker MVP: follow games, tick off daily, per-game + perfect-day streaks, stats, custom games, export/import
 - [x] CI + automatic deploy to GitHub Pages
 - [ ] Enable GitHub Pages (Settings → Pages → Source: GitHub Actions) and check the live site on a phone
-- [ ] Owner adds Ko-fi link and contact e-mail (TODOs in About.razor)
+- [x] Donation link (Buy Me a Coffee) on About page
+- [ ] Owner adds contact e-mail (TODO in About.razor)
 - [ ] Verify every link in games.json (content-seo)
 - [ ] Google Search Console set up + sitemap
 - [ ] First launch post (growth) – one community, e.g. r/SideProject

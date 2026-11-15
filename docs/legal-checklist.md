@@ -7,7 +7,7 @@ Not legal advice: a starting point. Check the official sources linked.
 - [x] Game names used only to describe/link; no logos or copied artwork
 - [x] No cookies or third-party scripts; data stays in the user's browser (privacy page says so)
 - [ ] Contact e-mail on About page
-- [ ] Donations (Ko-fi): income is taxable for you personally – keep a record (skat.dk)
+- [ ] Donations (Buy Me a Coffee, buymeacoffee.com/premoderncollection): income is taxable for you personally – keep a record (skat.dk)
 
 ## Before adding analytics
 - [ ] Cookieless tool (Cloudflare Web Analytics) → update privacy page; no consent banner needed for truly cookieless, anonymous stats, but re-check Datatilsynet guidance
