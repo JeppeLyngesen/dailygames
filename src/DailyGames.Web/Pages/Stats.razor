@@ -1,0 +1,57 @@
+@page "/stats"
+@inject TrackerService Service
+
+<PageTitle>Stats – DailyGames</PageTitle>
+
+<h1>Stats</h1>
+
+@if (_tracker is null)
+{
+    <p>Loading…</p>
+    return;
+}
+
+@{
+    var today = TrackerService.Today;
+    var perfect = StreakCalculator.PerfectDays(_tracker.State, today);
+    var days = Enumerable.Range(0, 28).Select(i => today.AddDays(-27 + i)).ToList();
+    var total = Math.Max(1, _tracker.FollowedGames.Count);
+}
+
+<section class="cards">
+    <div class="card"><span class="big">@perfect.Current</span><small>Perfect-day streak</small></div>
+    <div class="card"><span class="big">@perfect.Longest</span><small>Longest perfect streak</small></div>
+    <div class="card"><span class="big">@_tracker.State.Completions.Count</span><small>Games completed</small></div>
+</section>
+
+<h2>Last 4 weeks</h2>
+<div class="heatmap" role="img" aria-label="Completed games per day for the last 28 days">
+    @foreach (var day in days)
+    {
+        var count = _tracker.CompletedCount(day);
+        var level = count == 0 ? 0 : (int)Math.Ceiling(count * 4.0 / total);
+        <div class="cell level-@level" title="@day.ToString("ddd d MMM"): @count/@_tracker.FollowedGames.Count"></div>
+    }
+</div>
+
+<h2>Per game</h2>
+<table class="stats-table">
+    <thead><tr><th>Game</th><th>Current</th><th>Longest</th><th>Days played</th></tr></thead>
+    <tbody>
+        @foreach (var game in _tracker.FollowedGames)
+        {
+            var s = StreakCalculator.ForGame(_tracker.State, game.Id, today);
+            <tr><td>@game.Name</td><td>🔥 @s.Current</td><td>@s.Longest</td><td>@s.TotalDays</td></tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private Tracker? _tracker;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Service.EnsureLoadedAsync();
+        _tracker = Service.Tracker;
+    }
+}

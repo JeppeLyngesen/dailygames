@@ -1,0 +1,43 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - run: dotnet test -c Release
+      - run: dotnet publish src/DailyGames.Web -c Release -o out
+      - name: Set base path
+        # Served at https://<user>.github.io/dailygames/ by default.
+        # When you add a custom domain, set the repo variable BASE_PATH to "/".
+        run: |
+          BASE_PATH="${{ vars.BASE_PATH || '/dailygames/' }}"
+          sed -i "s|<base href=\"/\" />|<base href=\"$BASE_PATH\" />|" out/wwwroot/index.html
+          if [ "$BASE_PATH" = "/" ]; then sed -i 's/pathSegmentsToKeep = 1/pathSegmentsToKeep = 0/' out/wwwroot/404.html; fi
+          touch out/wwwroot/.nojekyll   # GitHub Pages must not hide the _framework folder
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: out/wwwroot
+      - id: deployment
+        uses: actions/deploy-pages@v4

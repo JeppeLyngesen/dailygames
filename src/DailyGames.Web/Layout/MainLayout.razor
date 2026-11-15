@@ -1,0 +1,23 @@
+@inherits LayoutComponentBase
+
+<header class="topbar">
+    <a class="brand" href="">🧩 DailyGames</a>
+    <nav>
+        <NavLink href="" Match="NavLinkMatch.All">Today</NavLink>
+        <NavLink href="stats">Stats</NavLink>
+        <NavLink href="games">Games</NavLink>
+        <NavLink href="about">About</NavLink>
+    </nav>
+</header>
+
+<main class="container">
+    @Body
+</main>
+
+<footer class="footer">
+    <p>
+        DailyGames is a free, unofficial tracker. It is not affiliated with the games listed.
+        · <a href="about#privacy">Privacy</a>
+        · <a href="about#support">Support the site ❤</a>
+    </p>
+</footer>

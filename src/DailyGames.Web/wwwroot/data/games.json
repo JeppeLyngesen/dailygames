@@ -1,0 +1,20 @@
+[
+  { "id": "wordle", "name": "Wordle", "url": "https://www.nytimes.com/games/wordle/index.html", "category": "Words", "description": "Guess the 5-letter word in 6 tries." },
+  { "id": "connections", "name": "Connections", "url": "https://www.nytimes.com/games/connections", "category": "Words", "description": "Sort 16 words into 4 groups." },
+  { "id": "strands", "name": "Strands", "url": "https://www.nytimes.com/games/strands", "category": "Words", "description": "Find the themed words in a letter grid." },
+  { "id": "mini-crossword", "name": "The Mini Crossword", "url": "https://www.nytimes.com/crosswords/game/mini", "category": "Words", "description": "A small crossword you can solve in minutes." },
+  { "id": "spelling-bee", "name": "Spelling Bee", "url": "https://www.nytimes.com/puzzles/spelling-bee", "category": "Words", "description": "Make words from 7 letters." },
+  { "id": "quordle", "name": "Quordle", "url": "https://www.merriam-webster.com/games/quordle/", "category": "Words", "description": "Four Wordles at once." },
+  { "id": "waffle", "name": "Waffle", "url": "https://wafflegame.net/daily", "category": "Words", "description": "Swap letters to fix the word grid." },
+  { "id": "contexto", "name": "Contexto", "url": "https://contexto.me/", "category": "Words", "description": "Find the secret word by meaning." },
+  { "id": "worldle", "name": "Worldle", "url": "https://worldle.teuteuf.fr/", "category": "Geography", "description": "Guess the country from its shape." },
+  { "id": "globle", "name": "Globle", "url": "https://globle-game.com/", "category": "Geography", "description": "Find the mystery country on the globe." },
+  { "id": "travle", "name": "Travle", "url": "https://travle.earth/", "category": "Geography", "description": "Connect two countries by land." },
+  { "id": "tradle", "name": "Tradle", "url": "https://oec.world/en/games/tradle", "category": "Geography", "description": "Guess the country from its exports." },
+  { "id": "timeguessr", "name": "TimeGuessr", "url": "https://timeguessr.com/", "category": "Geography", "description": "Guess where and when a photo was taken." },
+  { "id": "nerdle", "name": "Nerdle", "url": "https://nerdlegame.com/", "category": "Numbers & logic", "description": "Wordle, but with maths equations." },
+  { "id": "framed", "name": "Framed", "url": "https://framed.wtf/", "category": "Movies & music", "description": "Guess the movie from its frames." },
+  { "id": "bandle", "name": "Bandle", "url": "https://bandle.app/", "category": "Movies & music", "description": "Guess the song as instruments are added." },
+  { "id": "immaculate-grid", "name": "Immaculate Grid", "url": "https://www.immaculategrid.com/", "category": "Sports", "description": "Baseball trivia grid." },
+  { "id": "costcodle", "name": "Costcodle", "url": "https://costcodle.com/", "category": "Trivia", "description": "Guess the price of a Costco item." }
+]

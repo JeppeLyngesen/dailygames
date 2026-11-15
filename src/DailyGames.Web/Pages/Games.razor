@@ -1,0 +1,127 @@
+@page "/games"
+@inject TrackerService Service
+
+<PageTitle>Games – DailyGames</PageTitle>
+
+<h1>Your games</h1>
+
+@if (_tracker is null)
+{
+    <p>Loading…</p>
+    return;
+}
+
+<section>
+    <h2>Following</h2>
+    @if (_tracker.FollowedGames.Count == 0) { <p>None yet – pick some below.</p> }
+    <ul class="manage-list">
+        @foreach (var game in _tracker.FollowedGames)
+        {
+            <li>
+                <span>@game.Name</span>
+                <span class="actions">
+                    <button @onclick="() => MoveAsync(game.Id, -1)" title="Move up" aria-label="Move @game.Name up">↑</button>
+                    <button @onclick="() => MoveAsync(game.Id, 1)" title="Move down" aria-label="Move @game.Name down">↓</button>
+                    <button @onclick="() => UnfollowAsync(game.Id)">Remove</button>
+                    @if (game.IsCustom)
+                    {
+                        <button class="danger" @onclick="() => DeleteCustomAsync(game.Id)">Delete</button>
+                    }
+                </span>
+            </li>
+        }
+    </ul>
+</section>
+
+<section>
+    <h2>Discover</h2>
+    <input class="search" placeholder="Search games…" @bind="_search" @bind:event="oninput" />
+    @foreach (var group in _tracker.AllGames
+                 .Where(g => !_tracker.IsFollowed(g.Id))
+                 .Where(g => string.IsNullOrWhiteSpace(_search) || g.Name.Contains(_search, StringComparison.OrdinalIgnoreCase))
+                 .GroupBy(g => g.Category).OrderBy(g => g.Key))
+    {
+        <h3>@group.Key</h3>
+        <ul class="manage-list">
+            @foreach (var game in group.OrderBy(g => g.Name))
+            {
+                <li>
+                    <span><a href="@game.Url" target="_blank" rel="noopener noreferrer">@game.Name</a> <small>@game.Description</small></span>
+                    <button @onclick="() => FollowAsync(game.Id)">+ Follow</button>
+                </li>
+            }
+        </ul>
+    }
+</section>
+
+<section>
+    <h2>Add your own game</h2>
+    <form class="add-form" @onsubmit="AddCustomAsync">
+        <input placeholder="Name" @bind="_newName" required />
+        <input placeholder="https://…" @bind="_newUrl" type="url" required />
+        <button type="submit">Add</button>
+    </form>
+    @if (_error is not null) { <p class="error">@_error</p> }
+</section>
+
+<section>
+    <h2>Backup</h2>
+    <p>Your data is stored only in this browser. Export it to move it to another device.</p>
+    <button @onclick="ExportAsync">Export data</button>
+    <label class="file-button">Import data <InputFile OnChange="ImportAsync" accept=".json,application/json" /></label>
+    @if (_importMessage is not null) { <p>@_importMessage</p> }
+</section>
+
+@code {
+    [Inject] private IJSRuntime Js { get; set; } = default!;
+
+    private Tracker? _tracker;
+    private string _search = "";
+    private string _newName = "";
+    private string _newUrl = "";
+    private string? _error;
+    private string? _importMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Service.EnsureLoadedAsync();
+        _tracker = Service.Tracker;
+    }
+
+    private Task FollowAsync(string id) { _tracker!.Follow(id); return Service.SaveAsync(); }
+    private Task UnfollowAsync(string id) { _tracker!.Unfollow(id); return Service.SaveAsync(); }
+    private Task MoveAsync(string id, int offset) { _tracker!.Move(id, offset); return Service.SaveAsync(); }
+    private Task DeleteCustomAsync(string id) { _tracker!.RemoveCustomGame(id); return Service.SaveAsync(); }
+
+    private async Task AddCustomAsync()
+    {
+        try
+        {
+            _tracker!.AddCustomGame(_newName, _newUrl);
+            _newName = _newUrl = "";
+            _error = null;
+            await Service.SaveAsync();
+        }
+        catch (ArgumentException ex)
+        {
+            _error = ex.Message.Split(" (Parameter")[0];
+        }
+    }
+
+    private async Task ExportAsync() =>
+        await Js.InvokeVoidAsync("dailyGames.download", $"dailygames-{TrackerService.Today:yyyy-MM-dd}.json", Service.Export());
+
+    private async Task ImportAsync(InputFileChangeEventArgs e)
+    {
+        try
+        {
+            using var reader = new StreamReader(e.File.OpenReadStream(maxAllowedSize: 5_000_000));
+            await Service.ImportAsync(await reader.ReadToEndAsync());
+            _importMessage = "Import complete ✓";
+        }
+        catch (Exception ex) when (ex is System.Text.Json.JsonException or IOException)
+        {
+            _importMessage = "That file couldn't be read. Is it a DailyGames export?";
+        }
+    }
+}

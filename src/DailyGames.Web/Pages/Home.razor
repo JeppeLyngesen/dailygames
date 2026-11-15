@@ -1,0 +1,76 @@
+@page "/"
+@inject TrackerService Service
+
+<PageTitle>DailyGames – track your daily puzzles</PageTitle>
+
+<h1>Today</h1>
+
+@if (_tracker is null)
+{
+    <p>Loading…</p>
+}
+else
+{
+    var games = _tracker.FollowedGames;
+    var done = _tracker.CompletedCount(_today);
+    var perfect = StreakCalculator.PerfectDays(_tracker.State, _today);
+
+    <section class="summary">
+        <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="@games.Count" aria-valuenow="@done">
+            <div class="progress-bar" style="width:@(games.Count == 0 ? 0 : done * 100 / games.Count)%"></div>
+        </div>
+        <p>
+            <strong>@done / @games.Count</strong> done today
+            · Perfect-day streak: <strong>@perfect.Current</strong> 🔥
+            @if (games.Count > 0 && done == games.Count) { <span class="badge">All done! 🎉</span> }
+        </p>
+    </section>
+
+    @if (games.Count == 0)
+    {
+        <p>You aren't following any games yet. <a href="games">Pick some games</a>.</p>
+    }
+    else
+    {
+        <ul class="game-list">
+            @foreach (var game in games)
+            {
+                var completed = _tracker.IsCompleted(game.Id, _today);
+                var streak = StreakCalculator.ForGame(_tracker.State, game.Id, _today);
+                <li class="game @(completed ? "done" : "")">
+                    <button class="check" aria-pressed="@completed" title="@(completed ? "Mark as not done" : "Mark as done")"
+                            @onclick="() => ToggleAsync(game.Id)">
+                        @(completed ? "✓" : "")
+                    </button>
+                    <div class="info">
+                        <a href="@game.Url" target="_blank" rel="noopener noreferrer">@game.Name ↗</a>
+                        <small>@game.Category</small>
+                    </div>
+                    <div class="streak" title="Current streak (longest: @streak.Longest)">
+                        @if (streak.Current > 0) { <span>🔥 @streak.Current</span> }
+                        @if (!completed && streak.Current > 0) { <small class="warn">keep it alive!</small> }
+                    </div>
+                </li>
+            }
+        </ul>
+    }
+    <p class="hint"><a href="games">+ Add or remove games</a></p>
+}
+
+@code {
+    private Tracker? _tracker;
+    private DateOnly _today = TrackerService.Today;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Service.EnsureLoadedAsync();
+        _tracker = Service.Tracker;
+    }
+
+    private async Task ToggleAsync(string gameId)
+    {
+        _today = TrackerService.Today; // the page may have been open past midnight
+        _tracker!.Toggle(gameId, _today);
+        await Service.SaveAsync();
+    }
+}
